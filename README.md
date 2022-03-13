@@ -14,6 +14,20 @@ It will ask more information once you have selected an action so you don't have 
 There also a link at the end when the processing is done to rapidly view the result of the operation
 Can generate two type of histogram (rgb or gray).
 
-To do the processing part i use (except histogram): [image](https://github.com/image-rs/image) 
 
+To do the processing part i use (except histogram): [image](https://github.com/image-rs/image)
 and for the cli part : [clap](https://github.com/clap-rs/clap), [anyhom](https://github.com/dtolnay/anyhow), [indicatif](https://github.com/console-rs/indicatif)
+
+# Histogram 
+You have 2 options for the generator of histograms for analytical use 
+**Grey** and **RGB** the first one will do a average of the blue red and green component 
+and rgb will show 3 differents curve.
+
+## Exemple Lenna
+This histogram are the result on Lenna 
+
+![lena](https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/220px-Lenna_%28test_image%29.png)
+
+Grey:![lena_grey](.asset/greyHistogramLenna.png) 
+
+rgb:![lena_rgb](.asset/histogramLennaRGB.png)
