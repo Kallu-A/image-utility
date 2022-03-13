@@ -322,6 +322,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "image-utiliy"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "image",
+ "indicatif",
+]
+
+[[package]]
 name = "indexmap"
 version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -589,16 +599,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c7342d5883fbccae1cc37a2353b09c87c9b0f3afd73f5fb9bba687a1f733b029"
 dependencies = [
  "unicode-xid",
-]
-
-[[package]]
-name = "processing_image_cli"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "clap",
- "image",
- "indicatif",
 ]
 
 [[package]]

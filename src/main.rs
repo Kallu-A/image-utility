@@ -3,12 +3,13 @@ use std::io;
 use std::io::Write;
 use std::time::Duration;
 
-use clap::Parser;
 use anyhow::{anyhow, Result};
+use clap::Parser;
 use image::io::Reader as ImageReader;
 use indicatif::ProgressStyle;
+use crate::Action::{Blur, Brighten, Contrast, Flipv, GreyScale, Resize, Rotate180, Rotate270, Rotate90};
 
-/// Image Process: Does some basic operation on an image
+/// image-utiliy: Does some basic operation on an image
 ///
 /// Author: Kallu <lucas.aries@protonmail.com>
 /// Github: "https://github.com/Kallu-A/"
@@ -20,14 +21,45 @@ struct Cli {
     /// Path where the result is save
     #[clap(parse(from_os_str))]
     result: std::path::PathBuf,
+    /// Action to realise possible valures are :
+    ///
+    /// blur, resize, greyScale, contrast, brighten, rotate90, rotate180, rotate270, flipv
+    action: Action
+}
+
+/// Action representing all the possible action of the cli tools
+enum Action {
+    Blur, Resize, GreyScale, Contrast, Brighten, Rotate90, Rotate180, Rotate270, Flipv
+}
+
+impl ::core::str::FromStr for Action {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "blur" => Ok(Blur),
+            "resize" => Ok(Resize),
+            "greyscale" => Ok(GreyScale),
+            "contrast" => Ok(Contrast),
+            "brighten" => Ok(Brighten),
+            "rotate90" => Ok(Rotate90),
+            "rotate190" => Ok(Rotate180),
+            "rotate270" => Ok(Rotate270),
+            "flipv" => Ok(Flipv),
+            _ => Err("Incorrect action".to_string())
+        }
+    }
 }
 
 fn main() -> Result<()> {
-    let args:Cli = Cli::parse();
+    let args: Cli = Cli::parse();
 
     // verify path to image exist
     if !std::path::Path::new(&args.path).exists() {
-        return Err(anyhow!("could not read file `{}`", args.path.to_str().unwrap()));
+        return Err(anyhow!(
+            "could not read file `{}`",
+            args.path.to_str().unwrap()
+        ));
     }
 
     // verify path to image result if file already exist ask for overwrite else cancel operation
@@ -54,26 +86,27 @@ fn handler(args: Cli) -> Result<()> {
     pb.set_style(
         ProgressStyle::with_template("{spinner:.blue} {msg}")
             .unwrap()
-            .tick_strings(&[
-                "⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"
-            ]),
+            .tick_strings(&["⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"]),
     );
     pb.set_message("Calculating...");
 
-
-    let img = ImageReader::open(&args.path)?.decode()?;
-    let res = img.grayscale();
-    res.save(&args.result)?;
-
+    action_do(&args)?;
 
     pb.finish_with_message("Done ✅");
     // display message to see the result
     if args.result.is_absolute() {
         println!("See result : \"file://{}\"", args.result.to_str().unwrap());
     } else {
-        let path = current_dir().unwrap().join(args.result);
-        println!("See result : \"file://{}\""
-                 , path.to_str().unwrap());
+        let path = current_dir().unwrap().join(&args.result);
+        println!("See result : \"file://{}\"", path.to_str().unwrap());
     }
     Ok(())
+}
+
+fn action_do(args: &Cli) -> Result<()> {
+    let img = ImageReader::open(&args.path)?.decode()?;
+
+
+
+    res.save(&args.result)?
 }

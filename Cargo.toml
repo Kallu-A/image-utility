@@ -1,5 +1,5 @@
 [package]
-name = "processing_image_cli"
+name = "image-utiliy"
 version = "0.1.0"
 edition = "2021"
 
