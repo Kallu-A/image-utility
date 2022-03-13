@@ -1,5 +1,5 @@
 [package]
-name = "histogram_cli"
+name = "processing_image_cli"
 version = "0.1.0"
 edition = "2021"
 
