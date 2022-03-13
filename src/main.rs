@@ -12,7 +12,7 @@ use image::imageops::FilterType;
 use image::io::Reader as ImageReader;
 use image::DynamicImage;
 use indicatif::{ProgressBar, ProgressStyle};
-use crate::histogram::histogram_gray;
+use crate::histogram::{histogram_gray, histogram_rgb};
 
 /// Does some basic operation on an image
 ///
@@ -279,9 +279,9 @@ fn fliph_action(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImag
 }
 
 fn histogram_action(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
-    let input = take_input("Only gray color , or RGB ? `G/RGB`");
+    let input = take_input("Only gray color , or RGB ? `G/RGB`").to_uppercase();
     let res = if input == "RGB" {
-        histogram_gray(img)
+        histogram_rgb(img)
     } else if input == "G" {
         histogram_gray(img)
     } else {
