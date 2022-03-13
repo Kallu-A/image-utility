@@ -5,14 +5,17 @@ use std::io;
 use std::io::Write;
 use std::time::Duration;
 
-use crate::Action::{Blur, Brighten, Contrast, Fliph, Flipv, GrayScale, Histogram, Resize, Rotate180, Rotate270, Rotate90};
+use crate::histogram::{histogram_gray, histogram_rgb};
+use crate::Action::{
+    Blur, Brighten, Contrast, Fliph, Flipv, GrayScale, Histogram, Resize, Rotate180, Rotate270,
+    Rotate90,
+};
 use anyhow::{anyhow, Context, Result};
 use clap::Parser;
 use image::imageops::FilterType;
 use image::io::Reader as ImageReader;
 use image::DynamicImage;
 use indicatif::{ProgressBar, ProgressStyle};
-use crate::histogram::{histogram_gray, histogram_rgb};
 
 /// Does some basic operation on an image
 ///
@@ -75,7 +78,7 @@ enum Action {
     Rotate270,
     Flipv,
     Fliph,
-    Histogram
+    Histogram,
 }
 
 impl ::core::str::FromStr for Action {
@@ -278,7 +281,10 @@ fn fliph_action(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImag
     Ok(img.fliph())
 }
 
-fn histogram_action(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+fn histogram_action(
+    img: DynamicImage,
+    pb: &ProgressBarCustom,
+) -> Result<DynamicImage, anyhow::Error> {
     let input = take_input("Only gray color , or RGB ? `G/RGB`").to_uppercase();
     let res = if input == "RGB" {
         histogram_rgb(img)
@@ -286,7 +292,8 @@ fn histogram_action(img: DynamicImage, pb: &ProgressBarCustom) -> Result<Dynamic
         histogram_gray(img)
     } else {
         return Err(anyhow!("Wrong arguments"));
-    }.unwrap();
+    }
+    .unwrap();
     pb.launch();
 
     Ok(res)
