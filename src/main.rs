@@ -1,17 +1,18 @@
+mod histogram;
+
 use std::env::current_dir;
 use std::io;
 use std::io::Write;
 use std::time::Duration;
 
-use crate::Action::{
-    Blur, Brighten, Contrast, Fliph, Flipv, GrayScale, Resize, Rotate180, Rotate270, Rotate90,
-};
+use crate::Action::{Blur, Brighten, Contrast, Fliph, Flipv, GrayScale, Histogram, Resize, Rotate180, Rotate270, Rotate90};
 use anyhow::{anyhow, Context, Result};
 use clap::Parser;
 use image::imageops::FilterType;
 use image::io::Reader as ImageReader;
 use image::DynamicImage;
 use indicatif::{ProgressBar, ProgressStyle};
+use crate::histogram::histogram_gray;
 
 /// Does some basic operation on an image
 ///
@@ -29,7 +30,7 @@ struct Cli {
     result: std::path::PathBuf,
     /// Action to realise possible valures are :
     ///
-    /// blur, resize, greyScale, contrast, brighten, rotate90, rotate180, rotate270, flipv, fliph
+    /// blur, resize, greyScale, contrast, brighten, rotate90, rotate180, rotate270, flipv, fliph, histogram
     action: Action,
 }
 
@@ -74,6 +75,7 @@ enum Action {
     Rotate270,
     Flipv,
     Fliph,
+    Histogram
 }
 
 impl ::core::str::FromStr for Action {
@@ -91,7 +93,8 @@ impl ::core::str::FromStr for Action {
             "rotate270" => Ok(Rotate270),
             "flipv" => Ok(Flipv),
             "fliph" => Ok(Fliph),
-            _ => Err("Incorrect actions possibles are: blur, resize, greyScale, contrast, brighten, rotate90, rotate180, rotate270, flipv, fliph".to_string()),
+            "histogram" => Ok(Histogram),
+            _ => Err("Incorrect actions possibles are: blur, resize, greyScale, contrast, brighten, rotate90, rotate180, rotate270, flipv, fliph, histogram".to_string()),
         }
     }
 }
@@ -160,6 +163,7 @@ fn action_do(args: &Cli) -> Result<()> {
         Rotate270 => rotate270_action(img, &pb)?,
         Flipv => flipv_action(img, &pb)?,
         Fliph => fliph_action(img, &pb)?,
+        Histogram => histogram_action(img, &pb)?,
     };
 
     res.save(&args.result)?;
@@ -272,4 +276,18 @@ fn flipv_action(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImag
 fn fliph_action(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
     pb.launch();
     Ok(img.fliph())
+}
+
+fn histogram_action(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+    let input = take_input("Only gray color , or RGB ? `G/RGB`");
+    let res = if input == "RGB" {
+        histogram_gray(img)
+    } else if input == "G" {
+        histogram_gray(img)
+    } else {
+        return Err(anyhow!("Wrong arguments"));
+    }.unwrap();
+    pb.launch();
+
+    Ok(res)
 }

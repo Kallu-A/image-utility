@@ -12,7 +12,8 @@ This one will ask the parameters of the action you want to do after you have sel
 What does it mean? It means that you don't have to type a long line like `image-utility path path2 resize dim1 dim2`
 It will ask more information once you have selected an action so you don't have to remember a lot of things to use this program
 There also a link at the end when the processing is done to rapidly view the result of the operation
+Can generate two type of histogram (rgb or gray).
 
-To do the processing part i use : [image](https://github.com/image-rs/image) 
+To do the processing part i use (except histogram): [image](https://github.com/image-rs/image) 
 
 and for the cli part : [clap](https://github.com/clap-rs/clap), [anyhom](https://github.com/dtolnay/anyhow), [indicatif](https://github.com/console-rs/indicatif)
