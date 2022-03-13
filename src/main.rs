@@ -3,7 +3,9 @@ use std::io;
 use std::io::Write;
 use std::time::Duration;
 
-use crate::Action::{Blur, Brighten, Contrast, Fliph, Flipv, GrayScale, Resize, Rotate180, Rotate270, Rotate90};
+use crate::Action::{
+    Blur, Brighten, Contrast, Fliph, Flipv, GrayScale, Resize, Rotate180, Rotate270, Rotate90,
+};
 use anyhow::{anyhow, Context, Result};
 use clap::Parser;
 use image::imageops::FilterType;
@@ -11,10 +13,12 @@ use image::io::Reader as ImageReader;
 use image::DynamicImage;
 use indicatif::{ProgressBar, ProgressStyle};
 
-/// image-utiliy: Does some basic operation on an image
+/// Does some basic operation on an image
 ///
 /// Author: Kallu <lucas.aries@protonmail.com>
 /// Github: "https://github.com/Kallu-A/"
+///
+/// Found a issue ? go here : "https://github.com/Kallu-A/image-utility"
 #[derive(Parser)]
 struct Cli {
     /// Path to the picture
@@ -69,7 +73,7 @@ enum Action {
     Rotate180,
     Rotate270,
     Flipv,
-    Fliph
+    Fliph,
 }
 
 impl ::core::str::FromStr for Action {
@@ -155,7 +159,7 @@ fn action_do(args: &Cli) -> Result<()> {
         Rotate180 => rotate180_action(img, &pb)?,
         Rotate270 => rotate270_action(img, &pb)?,
         Flipv => flipv_action(img, &pb)?,
-        Fliph => fliph_action(img, &pb)?
+        Fliph => fliph_action(img, &pb)?,
     };
 
     res.save(&args.result)?;
