@@ -1,20 +1,23 @@
-use clap::Parser;
-use anyhow::{anyhow, Result};
+use std::env::current_dir;
 use std::io;
 use std::io::Write;
-use std::thread::sleep;
 use std::time::Duration;
-use image::GenericImageView;
-use image::io::Reader as ImageReader;
-use indicatif::{ProgressBar, ProgressStyle};
 
-/// Struct of the cli
+use clap::Parser;
+use anyhow::{anyhow, Result};
+use image::io::Reader as ImageReader;
+use indicatif::ProgressStyle;
+
+/// Image Process: Does some basic operation on an image
+///
+/// Author: Kallu <lucas.aries@protonmail.com>
+/// Github: "https://github.com/Kallu-A/"
 #[derive(Parser)]
 struct Cli {
-    /// Path to where looking for the picture
+    /// Path to the picture
     #[clap(parse(from_os_str))]
     path: std::path::PathBuf,
-    /// Path to where save the result
+    /// Path where the result is save
     #[clap(parse(from_os_str))]
     result: std::path::PathBuf,
 }
@@ -57,20 +60,20 @@ fn handler(args: Cli) -> Result<()> {
     );
     pb.set_message("Calculating...");
 
-    let img = ImageReader::open(args.path)?.decode()?;
 
-    //let res = img.grayscale();
-    //res.save(args.result)?;
-    /*
+    let img = ImageReader::open(&args.path)?.decode()?;
+    let res = img.grayscale();
+    res.save(&args.result)?;
 
-        for i in 0..100 {
-            sleep(Duration::new(0, 20000000));
-            pb.println(format!("[+] finished #{}", i));
-            pb.inc(1);
-        }
-        */
 
-    sleep(Duration::new(5, 0));
     pb.finish_with_message("Done ✅");
+    // display message to see the result
+    if args.result.is_absolute() {
+        println!("See result : \"file://{}\"", args.result.to_str().unwrap());
+    } else {
+        let path = current_dir().unwrap().join(args.result);
+        println!("See result : \"file://{}\""
+                 , path.to_str().unwrap());
+    }
     Ok(())
 }
