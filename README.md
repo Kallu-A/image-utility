@@ -10,7 +10,7 @@ have rust of anything else install run it by doing `./image-utility` at the root
 
 ### Debian
 You can install it like a debian package double click the file `image-utility_0.1.0_amd64.deb` and follow the step or
-run on the root `sudo dpkg -i image-utility_0.1.0_amd64.deb`
+run on the root of the project `sudo dpkg -i image-utility_0.1.0_amd64.deb`
 
 # Description
 `image-utility` is a really light and easy to use cli tools to do some basic image-processing like 
