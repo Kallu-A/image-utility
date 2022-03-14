@@ -3,14 +3,14 @@
 install [rust]("https://www.rust-lang.org/learn/get-started")
 run `cargo run -- --help` on the root of the project
 
-## As a binary
+## As a binary (linux)
 ### File
-You can also use it as a binary with the file `image-utility` so you don't need to 
-have rust or anything else install and run it by doing `./image-utility` at the root of the project
+You can also use it as a binary with the file `image-utility` in `install` so you don't need to 
+have rust or anything else install and run it by doing `./install/image-utility` at the root of the project
 
 ### Debian
-You can install it like a Debian package double click the file `image-utility_0.1.0_amd64.deb` and follow the step or
-run on the root of the project `sudo dpkg -i image-utility_0.1.0_amd64.deb`
+You can install it like a Debian package double click the file `image-utility_0.1.0_amd64.deb` in `install` and follow the step or
+run on the root of the project `sudo dpkg -i install/image-utility_0.1.0_amd64.deb`
 
 # Description
 `image-utility` is a light and easy-to-use cli tool to do some basic image-processing like 
