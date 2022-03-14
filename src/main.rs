@@ -202,7 +202,8 @@ fn resize_action(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicIma
         .with_context(|| format!("invalid format value, {}", input))?;
 
     pb.launch();
-    Ok(img.resize(nwidth, nheight, FilterType::CatmullRom))
+    // TODO ask for user if he want to preserve ratio `resize` `resize_exact`
+    Ok(img.resize_exact(nwidth, nheight, FilterType::CatmullRom))
 }
 
 /// Do the greyscale action
