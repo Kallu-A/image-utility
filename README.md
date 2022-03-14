@@ -39,15 +39,7 @@ You have 2 options for the generator of histograms for analytical use
 **Grey** and **RGB** the first one will do an average of the blue red and green components 
 and rgb will show 3 different curves.
 
-## Exemple Lenna
-Theses histograms are the result of Lenna 
+## Exemple result
+These will use Lenna
 
-![lena](https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/220px-Lenna_%28test_image%29.png)
-
-Grey:
-
-![lena_grey](.asset/greyHistogramLenna.png) 
-
-rgb:
-
-![lena_rgb](.asset/histogramLennaRGB.png)
+![lena](display.png) 
