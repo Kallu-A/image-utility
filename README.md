@@ -1,7 +1,11 @@
 # Installation
+## With Rust
 install [rust]("https://www.rust-lang.org/learn/get-started")
-
 run `cargo run -- --help` on the root of the project
+
+## As a binarie
+You can also use it like a binary with the file `image-utility` so you don't need to 
+have rust of anything else install run it by doing `./image-utility` at the root
 
 # Description
 `image-utility` is a really light and easy to use cli tools to do some basic image-processing like 
