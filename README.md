@@ -4,8 +4,13 @@ install [rust]("https://www.rust-lang.org/learn/get-started")
 run `cargo run -- --help` on the root of the project
 
 ## As a binarie
+### File
 You can also use it like a binary with the file `image-utility` so you don't need to 
 have rust of anything else install run it by doing `./image-utility` at the root
+
+### Debian
+You can install it like a debian package double click the file `image-utility_0.1.0_amd64.deb` and follow the step or
+run on the root `sudo dpkg -i image-utility_0.1.0_amd64.deb`
 
 # Description
 `image-utility` is a really light and easy to use cli tools to do some basic image-processing like 
@@ -32,6 +37,10 @@ This histogram are the result on Lenna
 
 ![lena](https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Lenna_%28test_image%29.png/220px-Lenna_%28test_image%29.png)
 
-Grey:![lena_grey](.asset/greyHistogramLenna.png) 
+Grey:
 
-rgb:![lena_rgb](.asset/histogramLennaRGB.png)
+![lena_grey](.asset/greyHistogramLenna.png) 
+
+rgb:
+
+![lena_rgb](.asset/histogramLennaRGB.png)
