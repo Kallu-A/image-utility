@@ -6,10 +6,7 @@ use std::io::Write;
 use std::time::Duration;
 
 use crate::histogram::{histogram_gray, histogram_rgb};
-use crate::Action::{
-    Blur, Brighten, Contrast, Fliph, Flipv, GrayScale, Histogram, Resize, Rotate180, Rotate270,
-    Rotate90,
-};
+use crate::Action::{Blur, Brighten, Contrast, Fliph, Flipv, GrayScale, Histogram, Resize, ResizeRatio, Rotate180, Rotate270, Rotate90};
 use anyhow::{anyhow, Context, Result};
 use clap::Parser;
 use image::imageops::FilterType;
@@ -33,7 +30,7 @@ struct Cli {
     result: std::path::PathBuf,
     /// Action to realise possible valures are :
     ///
-    /// blur, resize, grayscale, contrast, brighten, rotate90, rotate180, rotate270, flipv, fliph, histogram
+    /// blur, resize, resizeratio, grayscale, contrast, brighten, rotate90, rotate180, rotate270, flipv, fliph, histogram
     action: Action,
 }
 
@@ -70,6 +67,7 @@ impl ProgressBarCustom {
 enum Action {
     Blur,
     Resize,
+    ResizeRatio,
     GrayScale,
     Contrast,
     Brighten,
@@ -88,6 +86,7 @@ impl ::core::str::FromStr for Action {
         match s.to_lowercase().as_str() {
             "blur" => Ok(Blur),
             "resize" => Ok(Resize),
+            "resizeratio" => Ok(ResizeRatio),
             "grayscale" => Ok(GrayScale),
             "contrast" => Ok(Contrast),
             "brighten" => Ok(Brighten),
@@ -97,7 +96,7 @@ impl ::core::str::FromStr for Action {
             "flipv" => Ok(Flipv),
             "fliph" => Ok(Fliph),
             "histogram" => Ok(Histogram),
-            _ => Err("Incorrect actions possibles are: blur, resize, greyScale, contrast, brighten, rotate90, rotate180, rotate270, flipv, fliph, histogram".to_string()),
+            _ => Err("Incorrect actions, possibles are: blur, resize, resizeratio, greyScale, contrast, brighten, rotate90, rotate180, rotate270, flipv, fliph, histogram".to_string()),
         }
     }
 }
@@ -158,6 +157,7 @@ fn action_do(args: &Cli) -> Result<()> {
     let res = match args.action {
         Blur => blur_action(img, &pb)?,
         Resize => resize_action(img, &pb)?,
+        ResizeRatio => resize_ratio_action(img, &pb)?,
         GrayScale => grayscale_action(img, &pb)?,
         Contrast => constrast_action(img, &pb)?,
         Brighten => brighten_action(img, &pb)?,
@@ -201,10 +201,33 @@ fn resize_action(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicIma
         .parse::<u32>()
         .with_context(|| format!("invalid format value, {}", input))?;
 
+    let filter = filter_ask()?;
     pb.launch();
-    // TODO ask for user if he want to preserve ratio `resize` `resize_exact`
-    Ok(img.resize_exact(nwidth, nheight, FilterType::CatmullRom))
+    Ok(img.resize_exact(nwidth, nheight,
+                        filter))
 }
+
+/// Do the resize_ratio action
+fn resize_ratio_action(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+    let input = take_input("new dimension : `width/height`");
+    let input_vec = input.split('/').collect::<Vec<&str>>();
+
+    if input_vec.len() != 2 {
+        return Err(anyhow!("invalid arguments `width/height` got `{}`", input));
+    }
+
+    let nwidth = input_vec[0]
+        .parse::<u32>()
+        .with_context(|| format!("invalid format value, {}", input))?;
+    let nheight = input_vec[1]
+        .parse::<u32>()
+        .with_context(|| format!("invalid format value, {}", input))?;
+
+    let filter = filter_ask()?;
+    pb.launch();
+    Ok(img.resize(nwidth, nheight, filter))
+}
+
 
 /// Do the greyscale action
 fn grayscale_action(
@@ -298,4 +321,19 @@ fn histogram_action(
     pb.launch();
 
     Ok(res)
+}
+
+/// ask for a filter and return the filter
+fn filter_ask() -> Result<FilterType, anyhow::Error> {
+    let input = take_input("Filter: \n`1` = speed:fast, quality:low \n`2` = speed:medium quality:medium \n`3` = speed:slow quality:high");
+    let filter_u8 = input
+        .parse::<u8>()
+        .with_context(|| format!("invalid filter value, {}", input))?;
+
+    match filter_u8 {
+        1 => Ok(FilterType::Nearest),
+        2 => Ok(FilterType::CatmullRom),
+        3 => Ok(FilterType::Gaussian),
+        _ => Err(anyhow!("invalid filter value"))
+    }
 }

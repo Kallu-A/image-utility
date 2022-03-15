@@ -17,19 +17,20 @@ Can generate two types of histogram (rgb or gray).
 ## Possible Actions
 Here the list of all the action currently implemented:
 
-| **Name**      | **Description**                                                                                                        | 
-|---------------|------------------------------------------------------------------------------------------------------------------------|
-| **blur**      | perform a Gaussian blur with a sigma value who determined how much to blur it                                          |
-| **resize**    | resize a image without preserving the ratio at the new width and height                                                |
-| **grayscale** | return the grayscale of the image (only gray use)                                                                      |
-| **contrast**  | adjust the contrast by taking a value. Negative reduces the contrast positive increase it                              |
-| **brighten**  | take a value it will be the value added to every color of the pixel (positive increase brightness / negative decrease) |
-| **rotate90**  | rotate 90° clockwise                                                                                                   |
-| **rotate180** | rotate 180° clockwise                                                                                                  |
-| **rotate270** | rotate 270° clockwise                                                                                                  |
-| **flipv**     | flip the image vertically                                                                                              |
-| **fliph**     | flip the image horizontally                                                                                            |
-| **histogram** | create the histogram of the image, `gray` parameter does the average of the RGB, `rgb` do 3 curves for each color      |
+| **Name**        | **Description**                                                                                                        | 
+|-----------------|------------------------------------------------------------------------------------------------------------------------|
+| **blur**        | perform a Gaussian blur with a sigma value who determined how much to blur it                                          |
+| **resize**      | resize a image without preserving the ratio at the new width and height                                                |
+| **resizeratio** | resize a image and preserve the ratio at the new width and height                                                      |
+| **grayscale**   | return the grayscale of the image (only gray use)                                                                      |
+| **contrast**    | adjust the contrast by taking a value. Negative reduces the contrast positive increase it                              |
+| **brighten**    | take a value it will be the value added to every color of the pixel (positive increase brightness / negative decrease) |
+| **rotate90**    | rotate 90° clockwise                                                                                                   |
+| **rotate180**   | rotate 180° clockwise                                                                                                  |
+| **rotate270**   | rotate 270° clockwise                                                                                                  |
+| **flipv**       | flip the image vertically                                                                                              |
+| **fliph**       | flip the image horizontally                                                                                            |
+| **histogram**   | create the histogram of the image, `gray` parameter does the average of the RGB, `rgb` do 3 curves for each color      |
 
 # Installation
 ## With Rust
