@@ -33,7 +33,7 @@ struct Cli {
     result: std::path::PathBuf,
     /// Action to realise possible valures are :
     ///
-    /// blur, resize, greyScale, contrast, brighten, rotate90, rotate180, rotate270, flipv, fliph, histogram
+    /// blur, resize, grayscale, contrast, brighten, rotate90, rotate180, rotate270, flipv, fliph, histogram
     action: Action,
 }
 
