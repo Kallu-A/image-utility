@@ -11,7 +11,7 @@ Can generate two types of histogram (rgb or gray).
 
 *To do the processing part I use (except histogram): [image](https://github.com/image-rs/image)*
 
-*For the cli part : [clap](https://github.com/clap-rs/clap), [anyhom](https://github.com/dtolnay/anyhow), [indicatif](https://github.com/console-rs/indicatif)*
+*For the cli part : [clap](https://github.com/clap-rs/clap), [anyhow](https://github.com/dtolnay/anyhow), [indicatif](https://github.com/console-rs/indicatif)*
 
 
 ## Possible Actions
@@ -19,18 +19,18 @@ Here the list of all the action currently implemented:
 
 | **Name**        | **Description**                                                                                                        | 
 |-----------------|------------------------------------------------------------------------------------------------------------------------|
-| **blur**        | perform a Gaussian blur with a sigma value who determined how much to blur it                                          |
-| **resize**      | resize a image without preserving the ratio at the new width and height                                                |
-| **resizeratio** | resize a image and preserve the ratio at the new width and height                                                      |
-| **grayscale**   | return the grayscale of the image (only gray use)                                                                      |
-| **contrast**    | adjust the contrast by taking a value. Negative reduces the contrast positive increase it                              |
-| **brighten**    | take a value it will be the value added to every color of the pixel (positive increase brightness / negative decrease) |
-| **rotate90**    | rotate 90° clockwise                                                                                                   |
-| **rotate180**   | rotate 180° clockwise                                                                                                  |
-| **rotate270**   | rotate 270° clockwise                                                                                                  |
-| **flipv**       | flip the image vertically                                                                                              |
-| **fliph**       | flip the image horizontally                                                                                            |
-| **histogram**   | create the histogram of the image, `gray` parameter does the average of the RGB, `rgb` do 3 curves for each color      |
+| **blur**        | Perform a Gaussian blur with a sigma value who determined how much to blur it                                          |
+| **resize**      | Resize a image without preserving the ratio at the new width and height                                                |
+| **resizeratio** | Resize a image and preserve the ratio of the new width and height                                                      |
+| **grayscale**   | Return the grayscale of the image (only gray use)                                                                      |
+| **contrast**    | Adjust the contrast by taking a value. Negative reduces the contrast positive increase it                              |
+| **brighten**    | Take a value it will be the value added to every color of the pixel (positive increase brightness / negative decrease) |
+| **rotate90**    | Rotate 90° clockwise                                                                                                   |
+| **rotate180**   | Rotate 180° clockwise                                                                                                  |
+| **rotate270**   | Rotate 270° clockwise                                                                                                  |
+| **flipv**       | Flip the image vertically                                                                                              |
+| **fliph**       | Flip the image horizontally                                                                                            |
+| **histogram**   | Create the histogram of the image, `gray` parameter does the average of the RGB, `rgb` do 3 curves for each color      |
 
 # Installation
 ## With Rust
@@ -47,10 +47,10 @@ Run it by doing `./install/image-utility --help` at the root of the project
 
 ### Window
 You have the file `image-utility.exe` in `install`
-at the root of the project run from cmd `start install/image-utility.exe img* res* option*`
+at the root of the project run from cmd `start install/image-utility.exe img* res* action*`
 img: path to your image
 res: path where to save the image
-option: option you want to do 
+action: action you want to do 
 
 ### Debian
 You can install it like a Debian package double click the file `image-utility_0.1.0_amd64.deb` in `install` and follow the step or

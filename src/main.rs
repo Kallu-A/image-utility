@@ -1,22 +1,26 @@
 mod histogram;
+mod progress_bar_custom;
 
 use std::env::current_dir;
 use std::io;
 use std::io::Write;
-use std::time::Duration;
 
 use crate::histogram::{histogram_gray, histogram_rgb};
-use crate::Action::{Blur, Brighten, Contrast, Fliph, Flipv, GrayScale, Histogram, Resize, ResizeRatio, Rotate180, Rotate270, Rotate90};
+use crate::progress_bar_custom::progresse_bar_custom::ProgressBarCustom;
+use crate::Action::{
+    Blur, Brighten, Contrast, Fliph, Flipv, Grayscale, Histogram, Resize, Resizeratio, Rotate180,
+    Rotate270, Rotate90,
+};
 use anyhow::{anyhow, Context, Result};
-use clap::Parser;
+use clap::{Parser, Subcommand};
 use image::imageops::FilterType;
 use image::io::Reader as ImageReader;
 use image::DynamicImage;
-use indicatif::{ProgressBar, ProgressStyle};
 
-/// Does some basic operation on an image
 /// Found a issue ? go here : "https://github.com/Kallu-A/image-utility"
 #[derive(Parser)]
+#[clap(name = "image-utility")]
+#[clap(about = "Does some basic operation on an image", long_about = None)]
 #[clap(version = "1.0", author = "Kallu. <lucas.aries@protonmail.com>")]
 struct Cli {
     /// Path to the picture you want to transform
@@ -25,78 +29,38 @@ struct Cli {
     /// Path where the result is of the transformation is save
     #[clap(parse(from_os_str))]
     result: std::path::PathBuf,
-    /// Action to realise possible valures are :
-    ///
-    /// blur, resize, resizeratio, grayscale, contrast, brighten, rotate90, rotate180, rotate270, flipv, fliph, histogram
+    /// Action to realise to the image
     #[clap(subcommand)]
     action: Action,
 }
 
-struct ProgressBarCustom {
-    bar: ProgressBar,
-}
-
-/// Handle all action about the progressbar
-impl ProgressBarCustom {
-    /// create the progressbar
-    pub fn create() -> ProgressBarCustom {
-        let pb = indicatif::ProgressBar::new_spinner();
-        pb.set_style(
-            ProgressStyle::with_template("{spinner:.blue} {msg}")
-                .unwrap()
-                .tick_strings(&["⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"]),
-        );
-        ProgressBarCustom { bar: pb }
-    }
-
-    /// launch the progressbar
-    fn launch(&self) {
-        self.bar.set_message("Calculating...");
-        self.bar.enable_steady_tick(Duration::from_millis(80));
-    }
-
-    /// End the progressbar
-    fn done(&self) {
-        self.bar.finish_with_message("Done ✅");
-    }
-}
-
 /// Action representing all the possible action of the cli tools
+#[derive(Subcommand)]
 enum Action {
+    /// Perform a Gaussian blur with a sigma value who determined how much to blur it
     Blur,
+    /// Resize a image without preserving the ratio at the new width and height
     Resize,
-    ResizeRatio,
-    GrayScale,
+    /// Resize a image and preserve the ratio of the new width and height
+    Resizeratio,
+    /// Return the grayscale of the image (only gray use)
+    Grayscale,
+    /// Adjust the contrast by taking a value. Negative reduces the contrast positive increase it
     Contrast,
+    /// Take a value it will be the value added to every color of the pixel (positive increase brightness / negative decrease)
     Brighten,
+    /// Rotate 90° clockwise
     Rotate90,
+    /// Rotate 180° clockwise
     Rotate180,
+    /// Rotate 270° clockwise
     Rotate270,
+    /// Flip the image vertically
     Flipv,
+    /// Flip the image horizontally
     Fliph,
+    /// Create the histogram of the image, `gray` parameter does the average of the RGB, `rgb` do 3 curves for each color
     Histogram,
-}
-
-impl ::core::str::FromStr for Action {
-    type Err = String;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.to_lowercase().as_str() {
-            "blur" => Ok(Blur),
-            "resize" => Ok(Resize),
-            "resizeratio" => Ok(ResizeRatio),
-            "grayscale" => Ok(GrayScale),
-            "contrast" => Ok(Contrast),
-            "brighten" => Ok(Brighten),
-            "rotate90" => Ok(Rotate90),
-            "rotate180" => Ok(Rotate180),
-            "rotate270" => Ok(Rotate270),
-            "flipv" => Ok(Flipv),
-            "fliph" => Ok(Fliph),
-            "histogram" => Ok(Histogram),
-            _ => Err("Incorrect actions, possibles are: blur, resize, resizeratio, greyScale, contrast, brighten, rotate90, rotate180, rotate270, flipv, fliph, histogram".to_string()),
-        }
-    }
 }
 
 /// Function who take a input
@@ -155,8 +119,8 @@ fn action_do(args: &Cli) -> Result<()> {
     let res = match args.action {
         Blur => blur_action(img, &pb)?,
         Resize => resize_action(img, &pb)?,
-        ResizeRatio => resize_ratio_action(img, &pb)?,
-        GrayScale => grayscale_action(img, &pb)?,
+        Resizeratio => resize_ratio_action(img, &pb)?,
+        Grayscale => grayscale_action(img, &pb)?,
         Contrast => constrast_action(img, &pb)?,
         Brighten => brighten_action(img, &pb)?,
         Rotate90 => rotate90_action(img, &pb)?,
@@ -171,6 +135,8 @@ fn action_do(args: &Cli) -> Result<()> {
     pb.done();
     Ok(())
 }
+
+// All the subcommands actions below
 
 /// Do the blur action
 fn blur_action(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
@@ -201,12 +167,14 @@ fn resize_action(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicIma
 
     let filter = filter_ask()?;
     pb.launch();
-    Ok(img.resize_exact(nwidth, nheight,
-                        filter))
+    Ok(img.resize_exact(nwidth, nheight, filter))
 }
 
 /// Do the resize_ratio action
-fn resize_ratio_action(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+fn resize_ratio_action(
+    img: DynamicImage,
+    pb: &ProgressBarCustom,
+) -> Result<DynamicImage, anyhow::Error> {
     let input = take_input("new dimension : `width/height`");
     let input_vec = input.split('/').collect::<Vec<&str>>();
 
@@ -225,7 +193,6 @@ fn resize_ratio_action(img: DynamicImage, pb: &ProgressBarCustom) -> Result<Dyna
     pb.launch();
     Ok(img.resize(nwidth, nheight, filter))
 }
-
 
 /// Do the greyscale action
 fn grayscale_action(
@@ -332,6 +299,6 @@ fn filter_ask() -> Result<FilterType, anyhow::Error> {
         1 => Ok(FilterType::Nearest),
         2 => Ok(FilterType::CatmullRom),
         3 => Ok(FilterType::Gaussian),
-        _ => Err(anyhow!("invalid filter value"))
+        _ => Err(anyhow!("invalid filter value")),
     }
 }
