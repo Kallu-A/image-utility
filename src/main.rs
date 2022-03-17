@@ -15,22 +15,20 @@ use image::DynamicImage;
 use indicatif::{ProgressBar, ProgressStyle};
 
 /// Does some basic operation on an image
-///
-/// Author: Kallu <lucas.aries@protonmail.com>
-/// Github: "https://github.com/Kallu-A/"
-///
 /// Found a issue ? go here : "https://github.com/Kallu-A/image-utility"
 #[derive(Parser)]
+#[clap(version = "1.0", author = "Kallu. <lucas.aries@protonmail.com>")]
 struct Cli {
-    /// Path to the picture
+    /// Path to the picture you want to transform
     #[clap(parse(from_os_str))]
     path: std::path::PathBuf,
-    /// Path where the result is save
+    /// Path where the result is of the transformation is save
     #[clap(parse(from_os_str))]
     result: std::path::PathBuf,
     /// Action to realise possible valures are :
     ///
     /// blur, resize, resizeratio, grayscale, contrast, brighten, rotate90, rotate180, rotate270, flipv, fliph, histogram
+    #[clap(subcommand)]
     action: Action,
 }
 

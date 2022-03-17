@@ -47,7 +47,10 @@ Run it by doing `./install/image-utility --help` at the root of the project
 
 ### Window
 You have the file `image-utility.exe` in `install`
-at the root of the project run from cmd `start install/image-utility.exe %help%`
+at the root of the project run from cmd `start install/image-utility.exe img* res* option*`
+img: path to your image
+res: path where to save the image
+option: option you want to do 
 
 ### Debian
 You can install it like a Debian package double click the file `image-utility_0.1.0_amd64.deb` in `install` and follow the step or
