@@ -1,5 +1,6 @@
+use std::borrow::BorrowMut;
 use crate::filter::sobel;
-use crate::{histogram_gray, histogram_rgb, ProgressBarCustom};
+use crate::{action, histogram_gray, histogram_rgb, ProgressBarCustom};
 use anyhow::{anyhow, Context};
 use image::imageops::FilterType;
 use image::DynamicImage;
@@ -34,7 +35,7 @@ fn filter_ask_resize() -> Result<FilterType, anyhow::Error> {
 // All the subcommands actions below
 
 /// Do the blur action
-pub fn blur(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+pub fn blur(img: DynamicImage, pb: &mut ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
     let input = take_input("How much you want it blur: `[0.0; 40.0]`");
     pb.launch();
     Ok(img.blur(
@@ -45,7 +46,10 @@ pub fn blur(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, a
 }
 
 /// Do the resize action
-pub fn resize(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+pub fn resize(
+    img: DynamicImage,
+    pb: &mut ProgressBarCustom,
+) -> Result<DynamicImage, anyhow::Error> {
     let input = take_input("new dimension : `width/height`");
     let input_vec = input.split('/').collect::<Vec<&str>>();
 
@@ -68,7 +72,7 @@ pub fn resize(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage,
 /// Do the resize_ratio action
 pub fn resize_ratio(
     img: DynamicImage,
-    pb: &ProgressBarCustom,
+    pb: &mut ProgressBarCustom,
 ) -> Result<DynamicImage, anyhow::Error> {
     let input = take_input("new dimension : `width/height`");
     let input_vec = input.split('/').collect::<Vec<&str>>();
@@ -90,13 +94,19 @@ pub fn resize_ratio(
 }
 
 /// Do the greyscale action
-pub fn grayscale(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+pub fn grayscale(
+    img: DynamicImage,
+    pb: &mut ProgressBarCustom,
+) -> Result<DynamicImage, anyhow::Error> {
     pb.launch();
     Ok(img.grayscale())
 }
 
 /// Do the contrast action
-pub fn constrast(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+pub fn constrast(
+    img: DynamicImage,
+    pb: &mut ProgressBarCustom,
+) -> Result<DynamicImage, anyhow::Error> {
     let input = take_input("Adjust the contrast: `[-80.0; 200.0]`");
     pb.launch();
     Ok(img.adjust_contrast(
@@ -107,7 +117,10 @@ pub fn constrast(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicIma
 }
 
 /// Do the brighten action
-pub fn brighten(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+pub fn brighten(
+    img: DynamicImage,
+    pb: &mut ProgressBarCustom,
+) -> Result<DynamicImage, anyhow::Error> {
     let input = take_input("Adjust the brightness: `[-255; 255]`");
     pb.launch();
     Ok(img.brighten(
@@ -118,36 +131,48 @@ pub fn brighten(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImag
 }
 
 /// Do the rotate90 action
-pub fn rotate90(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+pub fn rotate90(
+    img: DynamicImage,
+    pb: &mut ProgressBarCustom,
+) -> Result<DynamicImage, anyhow::Error> {
     pb.launch();
     Ok(img.rotate90())
 }
 
 /// Do the rotate180 action
-pub fn rotate180(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+pub fn rotate180(
+    img: DynamicImage,
+    pb: &mut ProgressBarCustom,
+) -> Result<DynamicImage, anyhow::Error> {
     pb.launch();
     Ok(img.rotate180())
 }
 
 /// Do the rotate270 action
-pub fn rotate270(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+pub fn rotate270(
+    img: DynamicImage,
+    pb: &mut ProgressBarCustom,
+) -> Result<DynamicImage, anyhow::Error> {
     pb.launch();
     Ok(img.rotate270())
 }
 
 /// Do the flipv action
-pub fn flipv(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+pub fn flipv(img: DynamicImage, pb: &mut ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
     pb.launch();
     Ok(img.flipv())
 }
 
 /// Do the fliph action
-pub fn fliph(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+pub fn fliph(img: DynamicImage, pb: &mut ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
     pb.launch();
     Ok(img.fliph())
 }
 
-pub fn histogram(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+pub fn histogram(
+    img: DynamicImage,
+    pb: &mut ProgressBarCustom,
+) -> Result<DynamicImage, anyhow::Error> {
     let input = take_input("Only gray color , or RGB ? `G/RGB`").to_uppercase();
     let res = if input == "RGB" {
         histogram_rgb(img)
@@ -165,7 +190,7 @@ pub fn histogram(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicIma
 /// Do the invert
 pub fn invert(
     mut img: DynamicImage,
-    pb: &ProgressBarCustom,
+    pb: &mut ProgressBarCustom,
 ) -> Result<DynamicImage, anyhow::Error> {
     pb.launch();
     img.invert();
@@ -173,7 +198,10 @@ pub fn invert(
 }
 
 /// Apply a filter
-pub fn filter3x3(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+pub fn filter3x3(
+    img: DynamicImage,
+    pb: &mut ProgressBarCustom,
+) -> Result<DynamicImage, anyhow::Error> {
     let input = take_input(
         "Wich filter you want ?\
     \n 'low-pass': reduce high frequency\
@@ -204,4 +232,53 @@ pub fn filter3x3(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicIma
     };
     pb.launch();
     Ok(img.filter3x3(filter))
+}
+
+/// For the edit mode allow to loop on the match
+pub fn edit(
+    mut img: DynamicImage,
+    pb: &mut ProgressBarCustom,
+    show: bool,
+) -> Result<DynamicImage, anyhow::Error> {
+    let msg = if show {
+        "Action to do:\
+    \n 'cancel': leave without save\
+    \n 'exit': leave and save\
+    \n 'help': show all the action\
+    \n '*': action you want to do"
+    } else {
+        "enter your action"
+    };
+    let input = take_input(msg).to_uppercase();
+    match input.as_str() {
+        "CANCEL" => return Err(anyhow!("cancel action")),
+        "EXIT" => return Ok(img),
+        "HELP" => {
+            println!("see here for all actions: 'https://github.com/Kallu-A/image-utility#possible-actions'");
+            img = edit(img, pb, true)?;
+        }
+        _ => {
+            match input.as_str() {
+                "BLUR" => img = action::blur(img, pb)?,
+                "BRIGHTEN" => img = action::brighten(img, pb)?,
+                "CONTRAST" => img = action::constrast(img, pb)?,
+                "FILTER" => img = action::filter3x3(img, pb)?,
+                "FLIPH" => img = action::fliph(img, pb)?,
+                "FLIPV" => img = action::flipv(img, pb)?,
+                "GRAYSCALE" => img = action::grayscale(img, pb)?,
+                "HISTOGRAM" => img = action::histogram(img, pb)?,
+                "INVERT" => img = action::invert(img, pb)?,
+                "RESIZE" => img = action::resize(img, pb)?,
+                "RESIZERATIO" => img = action::resize_ratio(img, pb)?,
+                "ROTATE90" => img = action::rotate90(img, pb)?,
+                "ROTATE180" => img = action::rotate180(img, pb)?,
+                "ROTATE270" => img = action::rotate270(img, pb)?,
+                _ => println!("Invalid action. please retry"),
+            };
+            pb.done();
+            let mut pb = ProgressBarCustom::create();
+            img = edit(img, pb.borrow_mut(), false)?
+        }
+    }
+    Ok(img)
 }

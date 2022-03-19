@@ -3,13 +3,14 @@ mod filter;
 mod histogram;
 mod progress_bar_custom;
 
+use std::borrow::BorrowMut;
 use std::env::current_dir;
 
 use crate::action::take_input;
 use crate::histogram::{histogram_gray, histogram_rgb};
 use crate::progress_bar_custom::progresse_bar_custom::ProgressBarCustom;
 use crate::Action::{
-    Blur, Brighten, Contrast, Filter, Fliph, Flipv, Grayscale, Histogram, Invert, Resize,
+    Blur, Brighten, Contrast, Edit, Filter, Fliph, Flipv, Grayscale, Histogram, Invert, Resize,
     Resizeratio, Rotate180, Rotate270, Rotate90,
 };
 use anyhow::{anyhow, Result};
@@ -63,6 +64,8 @@ enum Action {
     Filter,
     /// Invert the color of the image
     Invert,
+    /// Allows to perform multiple action on an image
+    Edit,
 }
 
 fn main() -> Result<()> {
@@ -105,24 +108,26 @@ fn handler(args: Cli) -> Result<()> {
 }
 
 fn action_do(args: &Cli) -> Result<()> {
-    let pb = ProgressBarCustom::create();
+    let mut pb_ref = ProgressBarCustom::create();
+    let pb = pb_ref.borrow_mut();
     let img = ImageReader::open(&args.path)?.decode()?;
 
     let res = match args.action {
-        Blur => action::blur(img, &pb)?,
-        Resize => action::resize(img, &pb)?,
-        Resizeratio => action::resize_ratio(img, &pb)?,
-        Grayscale => action::grayscale(img, &pb)?,
-        Contrast => action::constrast(img, &pb)?,
-        Brighten => action::brighten(img, &pb)?,
-        Rotate90 => action::rotate90(img, &pb)?,
-        Rotate180 => action::rotate180(img, &pb)?,
-        Rotate270 => action::rotate270(img, &pb)?,
-        Flipv => action::flipv(img, &pb)?,
-        Fliph => action::fliph(img, &pb)?,
-        Histogram => action::histogram(img, &pb)?,
-        Filter => action::filter3x3(img, &pb)?,
-        Invert => action::invert(img, &pb)?,
+        Blur => action::blur(img, pb)?,
+        Resize => action::resize(img, pb)?,
+        Resizeratio => action::resize_ratio(img, pb)?,
+        Grayscale => action::grayscale(img, pb)?,
+        Contrast => action::constrast(img, pb)?,
+        Brighten => action::brighten(img, pb)?,
+        Rotate90 => action::rotate90(img, pb)?,
+        Rotate180 => action::rotate180(img, pb)?,
+        Rotate270 => action::rotate270(img, pb)?,
+        Flipv => action::flipv(img, pb)?,
+        Fliph => action::fliph(img, pb)?,
+        Histogram => action::histogram(img, pb)?,
+        Filter => action::filter3x3(img, pb)?,
+        Invert => action::invert(img, pb)?,
+        Edit => action::edit(img, pb, true)?,
     };
 
     res.save(&args.result)?;

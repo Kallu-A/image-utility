@@ -30,11 +30,11 @@ fn calcul(i: u32, j: u32, rgbx: Rgba<u8>, rgby: Rgba<u8>, rep: &mut DynamicImage
     let mut green = rgbx.0[1] as u32 * rgbx.0[1] as u32 + rgby.0[1] as u32 * rgby.0[1] as u32;
     let mut blue = rgbx.0[2] as u32 * rgbx.0[2] as u32 + rgby.0[2] as u32 * rgby.0[2] as u32;
     red = red.sqrt();
-    green =green.sqrt();
+    green = green.sqrt();
     blue = blue.sqrt();
-    let red = if red > 255 { 255} else { red };
-    let green = if green > 255 { 255} else { green };
-    let blue = if blue > 255 { 255} else { red };
+    let red = if red > 255 { 255 } else { red };
+    let green = if green > 255 { 255 } else { green };
+    let blue = if blue > 255 { 255 } else { red };
     let color = ((red + green + blue) / 3) as u8;
     rep.put_pixel(
         i,

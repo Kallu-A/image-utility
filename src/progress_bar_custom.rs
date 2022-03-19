@@ -4,6 +4,7 @@ pub mod progresse_bar_custom {
 
     pub struct ProgressBarCustom {
         bar: ProgressBar,
+        launch: bool,
     }
 
     /// Handle all action about the progressbar
@@ -16,18 +17,24 @@ pub mod progresse_bar_custom {
                     .unwrap()
                     .tick_strings(&["⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"]),
             );
-            ProgressBarCustom { bar: pb }
+            ProgressBarCustom {
+                bar: pb,
+                launch: false,
+            }
         }
 
         /// launch the progressbar
-        pub fn launch(&self) {
+        pub fn launch(&mut self) {
             self.bar.set_message("Calculating...");
             self.bar.enable_steady_tick(Duration::from_millis(80));
+            self.launch = true;
         }
 
         /// End the progressbar
         pub fn done(&self) {
-            self.bar.finish_with_message("Done ✅");
+            if self.launch {
+                self.bar.finish_with_message("Done ✅");
+            }
         }
     }
 }
