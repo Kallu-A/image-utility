@@ -16,5 +16,5 @@ cp target/release/image-utility install/
 # debian
 echo debian deploy:
 cargo deb
-cp target/debian/image-utility_0.1.0_amd64.deb install/
+cp target/debian/image-utility_*_amd64.deb install/
 
