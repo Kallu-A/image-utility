@@ -1,3 +1,4 @@
+use crate::filter::sobel;
 use crate::{histogram_gray, histogram_rgb, ProgressBarCustom};
 use anyhow::{anyhow, Context};
 use image::imageops::FilterType;
@@ -159,4 +160,48 @@ pub fn histogram(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicIma
     pb.launch();
 
     Ok(res)
+}
+
+/// Do the invert
+pub fn invert(
+    mut img: DynamicImage,
+    pb: &ProgressBarCustom,
+) -> Result<DynamicImage, anyhow::Error> {
+    pb.launch();
+    img.invert();
+    Ok(img)
+}
+
+/// Apply a filter
+pub fn filter3x3(img: DynamicImage, pb: &ProgressBarCustom) -> Result<DynamicImage, anyhow::Error> {
+    let input = take_input(
+        "Wich filter you want ?\
+    \n 'low-pass': reduce high frequency\
+    \n 'high-pass': reduce low frequency\
+    \n 'sobel-x': detect the vertical border\
+    \n 'sobel-y': detect the horizontal border\
+    \n 'sobel-xy': detect vertical and horizontal border",
+    )
+    .to_uppercase();
+    let filter = match input.as_str() {
+        "LOW-PASS" => &[
+            1_f32, 1_f32, 1_f32, 1_f32, 1_f32, 1_f32, 1_f32, 1_f32, 1_f32,
+        ],
+        "HIGH-PASS" => &[
+            -1_f32, -1_f32, -1_f32, -1_f32, 16_f32, -1_f32, -1_f32, -1_f32, -1_f32,
+        ],
+        "SOBEL-X" => &[
+            -1_f32, 0_f32, 1_f32, -2_f32, 0_f32, 2_f32, -1_f32, 0_f32, 1_f32,
+        ],
+        "SOBEL-Y" => &[
+            -1_f32, -2_f32, -1_f32, 0_f32, 0_f32, 0_f32, 1_f32, 2_f32, 1_f32,
+        ],
+        "SOBEL-XY" => {
+            pb.launch();
+            return Ok(sobel(img));
+        }
+        _ => return Err(anyhow!("Wrong filter")),
+    };
+    pb.launch();
+    Ok(img.filter3x3(filter))
 }

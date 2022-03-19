@@ -1,4 +1,5 @@
 mod action;
+mod filter;
 mod histogram;
 mod progress_bar_custom;
 
@@ -8,8 +9,8 @@ use crate::action::take_input;
 use crate::histogram::{histogram_gray, histogram_rgb};
 use crate::progress_bar_custom::progresse_bar_custom::ProgressBarCustom;
 use crate::Action::{
-    Blur, Brighten, Contrast, Fliph, Flipv, Grayscale, Histogram, Resize, Resizeratio, Rotate180,
-    Rotate270, Rotate90,
+    Blur, Brighten, Contrast, Filter, Fliph, Flipv, Grayscale, Histogram, Invert, Resize,
+    Resizeratio, Rotate180, Rotate270, Rotate90,
 };
 use anyhow::{anyhow, Result};
 use clap::{Parser, Subcommand};
@@ -17,8 +18,8 @@ use image::io::Reader as ImageReader;
 
 #[derive(Parser)]
 #[clap(name = "image-utility")]
-#[clap(about = "Does some basic operation on an image \n Found a a issue ? go here: 'https://github.com/Kallu-A/image-utility'", long_about = None)]
-#[clap(version = "1.0", author = "Kallu. <lucas.aries@protonmail.com>")]
+#[clap(about = "Does some basic operation on an image \nFound a a issue ? go here: 'https://github.com/Kallu-A/image-utility'", long_about = None)]
+#[clap(version = "0.1.0", author = "Kallu. <lucas.aries@protonmail.com>")]
 struct Cli {
     /// Path to the picture you want to transform
     #[clap(parse(from_os_str))]
@@ -58,6 +59,10 @@ enum Action {
     Fliph,
     /// Create the histogram of the image, `gray` parameter does the average of the RGB, `rgb` do 3 curves for each color
     Histogram,
+    /// Filter the image with the specified mask 3x3
+    Filter,
+    /// Invert the color of the image
+    Invert,
 }
 
 fn main() -> Result<()> {
@@ -116,6 +121,8 @@ fn action_do(args: &Cli) -> Result<()> {
         Flipv => action::flipv(img, &pb)?,
         Fliph => action::fliph(img, &pb)?,
         Histogram => action::histogram(img, &pb)?,
+        Filter => action::filter3x3(img, &pb)?,
+        Invert => action::invert(img, &pb)?,
     };
 
     res.save(&args.result)?;
