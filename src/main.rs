@@ -20,7 +20,7 @@ use image::io::Reader as ImageReader;
 #[derive(Parser)]
 #[clap(name = "image-utility")]
 #[clap(about = "Does some basic operation on an image \nFound a a issue ? go here: 'https://github.com/Kallu-A/image-utility'", long_about = None)]
-#[clap(version = "0.1.0", author = "Kallu. <lucas.aries@protonmail.com>")]
+#[clap(version = "0.2.0", author = "Kallu. <lucas.aries@protonmail.com>")]
 struct Cli {
     /// Path to the picture you want to transform
     #[clap(parse(from_os_str))]
