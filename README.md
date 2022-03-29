@@ -50,7 +50,7 @@ Run it by doing `./install/image-utility --help` at the root of the project
 
 ### Window
 You have the file `image-utility.exe` in `install`
-at the root of the project run from cmd `start install/image-utility.exe img* res* action*`
+at the root of the project run from cmd `./install/image-utility.exe --help` in a window powershell
 img: path to your image
 res: path where to save the image
 action: action you want to do 
